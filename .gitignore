@@ -11,4 +11,4 @@ node_modules
 jspm_packages
 
 # Tests
-
+/test/reports/
