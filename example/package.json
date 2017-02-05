@@ -1,0 +1,15 @@
+{
+  "name": "example for selenium-screen-master",
+  "version": "1.0.0",
+  "description": "",
+  "main": "compare.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "webbestmaster",
+  "license": "MIT",
+  "dependencies": {
+    "selenium-screen-master": "^0.1.1",
+    "selenium-webdriver": "^3.0.1"
+  }
+}
