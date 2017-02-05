@@ -1,0 +1,33 @@
+{
+  "name": "selenium-screen-master",
+  "version": "0.1.0",
+  "description": "Selenium Screen Master will helps you work with screenshots.",
+  "keywords": [
+    "selenium",
+    "screen",
+    "master",
+    "test",
+    "element",
+    "screenshot",
+    "compare"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webbestmaster/selenium-screen-master.git"
+  },
+  "author": "webbestmaster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webbestmaster/selenium-screen-master/issues"
+  },
+  "homepage": "https://github.com/webbestmaster/selenium-screen-master#readme",
+  "dependencies": {
+    "canvas": "^1.6.2",
+    "node-resemble": "^1.1.3",
+    "selenium-webdriver": "^3.0.1"
+  }
+}
