@@ -1,7 +1,7 @@
 {
-  "name": "example for selenium-screen-master",
+  "name": "example-for-selenium-screen-master",
   "version": "1.0.0",
-  "description": "",
+  "description": "Example for selenium screen master",
   "main": "compare.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
