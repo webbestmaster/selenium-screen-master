@@ -26,7 +26,7 @@ describe('selenium screen master test', function () {
 
     let browser;
     let webdriver = require('selenium-webdriver');
-    let byCss = webdriver.By.css;
+    // let byCss = webdriver.By.css;
 
     beforeEach(() => browser = new webdriver
         .Builder()
@@ -37,11 +37,11 @@ describe('selenium screen master test', function () {
 
     afterEach(() => browser.quit());
 
-    it('Take screenshot of element', function (done) {
+    it('Take screenshot of selector', function (done) {
 
         browser.get(SERVER_URL);
 
-        ssm.takeScreenshotOfElement(browser, browser.findElement(byCss('#ancient-empire-strike-back'))).then(image => {
+        ssm.takeScreenshotOfSelector('#ancient-empire-strike-back', browser).then(image => {
 
             resemble(image)
                 .compareTo('./ssm-ref-folder/game.png')
@@ -78,9 +78,8 @@ describe('selenium screen master test', function () {
         browser.get(SERVER_URL);
 
         return ssm
-            .compare({
+            .compareOfSelector('[id="1001-tangram"]', {
                 browser: browser,
-                element: browser.findElement(byCss('[id="1001-tangram"]')),
                 image: './game.png',
                 mode: MODES.TEST
             })
@@ -112,20 +111,19 @@ describe('selenium screen master test', function () {
 
     });
 
-    it('Comparing footer', function () {
+    it('Comparing footer of selector', function () {
 
         browser.get(SERVER_URL);
 
         return ssm
-            .compare({
+            .compareOfSelector('body > div:last-child', {
                 browser: browser,
-                element: browser.findElement(byCss('body > div:last-child')), // get foooter
                 image: './footer.png',
                 mode: MODES.TEST
             })
             .then(comparing => {
 
-                assert(comparing.info.misMatchPercentage === '0.00', 'Should be the different images');
+                assert(comparing.info.misMatchPercentage === '0.00', 'Should be the same images');
 
                 addContext(this, {
                     title: 'Actual',

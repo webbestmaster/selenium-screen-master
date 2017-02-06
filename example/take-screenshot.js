@@ -14,10 +14,21 @@ let browser = new webdriver
 
 browser.get(SERVER_URL);
 
-// also see .takeScreenshotBySelector(browser, selector)
-ssm.takeScreenshotOfElement(browser, browser.findElement(byCss('#ancient-empire-strike-back')))
+ssm
+    .takeScreenshotOfSelector('#ancient-empire-strike-back', browser)
     .then(image => {
         // image base64
         console.log(image);
-    })
-    .then(() => browser.quit());
+    });
+
+// OR
+
+ssm
+    .takeScreenshotOfElement(browser.findElement(byCss('#ancient-empire-strike-back')), browser)
+    .then(image => console.log(image));
+
+// OR
+
+ssm
+    .takeScreenshotOfArea(80, 200, 500, 300, browser)
+    .then(image => console.log(image));

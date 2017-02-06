@@ -1,4 +1,3 @@
-
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
 const MODES = ssm.MODES;
@@ -8,7 +7,7 @@ ssm.setPathToReferenceFolder('./ssm-ref-folder');
 // WARNING
 // to COLLECT screenshots use MODE = MODES.COLLECT
 // to TEST    screenshots use MODE = MODES.TEST
-const MODE = MODES[process.env.MODE] || MODES.COLLECT;
+const MODE = MODES[process.env.MODE] || MODES.TEST;
 
 let SERVER_URL = 'http://statlex.github.io/';
 let WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
@@ -24,9 +23,8 @@ let browser = new webdriver
 browser.get(SERVER_URL);
 
 ssm
-    .compare({
+    .compareOfSelector('#ancient-empire-strike-back', {
         browser: browser,
-        element: browser.findElement(byCss('#ancient-empire-strike-back')),
         image: 'game.png',
         mode: MODES.TEST // see WARNING
     })
@@ -42,5 +40,24 @@ ssm
 
         console.log(comparing);
 
+    });
+
+// OR
+
+ssm
+    .compareOfElement(browser.findElement(byCss('#ancient-empire-strike-back')), {
+        browser: browser,
+        image: 'game.png',
+        mode: MODES.TEST // see WARNING
     })
-    .then(() => browser.quit());
+    .then(comparing => console.log(comparing));
+
+// OR
+
+ssm
+    .compareOfArea(80, 200, 500, 300, {
+        browser: browser,
+        image: 'game.png',
+        mode: MODES.TEST // see WARNING
+    })
+    .then(comparing => console.log(comparing));
