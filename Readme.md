@@ -48,12 +48,13 @@ let browser = new webdriver
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
 
-ssm.setPathToReferenceFolder('./ssm-ref-folder');
-
 // WARNING
 // to COLLECT screenshots use MODE = MODES.COLLECT
 // to TEST    screenshots use MODE = MODES.TEST
+const MODES = ssm.MODES;
 const MODE = MODES[process.env.MODE] || MODES.COLLECT;
+
+ssm.setPathToReferenceFolder('./ssm-ref-folder');
 
 //... some code ...
 
