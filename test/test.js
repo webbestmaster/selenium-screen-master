@@ -44,7 +44,7 @@ describe('selenium screen master test', function () {
         ssm.takeScreenshotOfElement(browser, browser.findElement(byCss('#ancient-empire-strike-back'))).then(image => {
 
             resemble(image)
-                .compareTo('./ssm-ref-folder/my-image-name.png')
+                .compareTo('./ssm-ref-folder/game.png')
                 .onComplete(data => {
 
                         assert(data.misMatchPercentage === '0.00', 'Should be the same images');
@@ -56,7 +56,7 @@ describe('selenium screen master test', function () {
 
                         addContext(this, {
                             title: 'Expect',
-                            value: util.createTag('img', ['src', './../ssm-ref-folder/my-image-name.png'])
+                            value: util.createTag('img', ['src', './../ssm-ref-folder/game.png'])
                         });
 
                         addContext(this, {
@@ -73,7 +73,7 @@ describe('selenium screen master test', function () {
 
     });
 
-    it('Comparing', function () {
+    it('Comparing game', function () {
 
         browser.get(SERVER_URL);
 
@@ -81,12 +81,51 @@ describe('selenium screen master test', function () {
             .compare({
                 browser: browser,
                 element: browser.findElement(byCss('[id="1001-tangram"]')),
-                image: './my-image-name.png',
+                image: './game.png',
                 mode: MODES.TEST
             })
             .then(comparing => {
 
                 assert(comparing.info.misMatchPercentage !== '0.00', 'Should be the different images');
+
+                addContext(this, {
+                    title: 'Actual',
+                    value: util.createTag('img', ['src', comparing.actual])
+                });
+
+                addContext(this, {
+                    title: 'Expect',
+                    value: util.createTag('img', ['src', comparing.expect])
+                });
+
+                addContext(this, {
+                    title: 'Different',
+                    value: util.createTag('img', ['src', comparing.different])
+                });
+
+                addContext(this, {
+                    title: 'Different Info',
+                    value: comparing.info
+                });
+
+            });
+
+    });
+
+    it('Comparing footer', function () {
+
+        browser.get(SERVER_URL);
+
+        return ssm
+            .compare({
+                browser: browser,
+                element: browser.findElement(byCss('body > div:last-child')), // get foooter
+                image: './footer.png',
+                mode: MODES.TEST
+            })
+            .then(comparing => {
+
+                assert(comparing.info.misMatchPercentage === '0.00', 'Should be the different images');
 
                 addContext(this, {
                     title: 'Actual',

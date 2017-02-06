@@ -195,10 +195,18 @@ function takeScreenshotOfElement(browser, element) {
         .then(data => {
             location = data[0];
             size = data[1];
-            return browser.executeScript('scroll(0, ' + location.y + ')');
+            return browser.executeScript('scroll(0, ' + location.y + ')')
         })
-        .then(() => browser.takeScreenshot())
-        .then(image => {
+        .then(() =>
+            Promise.all([
+                browser.executeScript('return document.body.scrollTop'),
+                browser.takeScreenshot()
+            ])
+        )
+        .then(data => {
+
+            let deltaScrollTop = location.y - parseInt(data[0], 10);
+            let image = data[1];
 
             let canvas = new Canvas(size.width, size.height),
                 ctx = canvas.getContext('2d'),
@@ -206,7 +214,7 @@ function takeScreenshotOfElement(browser, element) {
 
             img.src = BASE64_IMAGE_PREFIX + image;
 
-            ctx.drawImage(img, -location.x, 0, img.width, img.height);
+            ctx.drawImage(img, -location.x, -deltaScrollTop, img.width, img.height);
 
             return canvas.toDataURL();
 

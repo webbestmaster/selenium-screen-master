@@ -27,8 +27,8 @@ ssm
     .compare({
         browser: browser,
         element: browser.findElement(byCss('#ancient-empire-strike-back')),
-        image: 'my-image-name.png',
-        mode: MODE // see WARNING
+        image: 'game.png',
+        mode: MODES.TEST // see WARNING
     })
     .then(comparing => {
 
