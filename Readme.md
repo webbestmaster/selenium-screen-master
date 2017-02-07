@@ -57,7 +57,6 @@ ssm
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
 
-
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
