@@ -9,8 +9,10 @@
  OS X: brew install pkg-config cairo libpng jpeg giflib
  */
 
+/*global WebDriverHTMLElement*/
+
 // external modules
-const webdriver = require('selenium-webdriver');
+const WebDriver = require('selenium-webdriver');
 const Canvas = require('canvas');
 const resemble = require('node-resemble');
 
@@ -18,7 +20,7 @@ const resemble = require('node-resemble');
 const path = require('path');
 const fs = require('fs');
 
-const byCss = webdriver.By.css;
+const byCss = WebDriver.By.css;
 
 const Image = Canvas.Image;
 const BASE64_IMAGE_PREFIX = 'data:image/png;base64,';
@@ -48,7 +50,8 @@ class Ssm {
          * @type {Object}
          */
         this._attr = {
-            pathToReferenceFolder: ''
+            pathToReferenceFolder: '',
+            driver: null
         };
 
     }
@@ -57,7 +60,7 @@ class Ssm {
      * Set folder to save collected images
      * @public
      * @param {string} pathToReferenceFolder - path to reference folder
-     * @return undefined
+     * @return void
      */
     setPathToReferenceFolder(pathToReferenceFolder) {
         this._attr.pathToReferenceFolder = pathToReferenceFolder;
@@ -65,36 +68,58 @@ class Ssm {
 
     /**
      * Get path to reference folder
-     * @return {string}
      * @public
+     * @return {string}
      */
     getPathToReferenceFolder() {
         return this._attr.pathToReferenceFolder;
     }
 
     /**
-     * Compare images
      * @public
-     * @param {string} selector - usual css selector
-     * @param {Selenium Web Driver Instance} data.browser
-     * @param {string} data.image - path/to/your/image.png
-     * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
-     * @return {Promise} will resolve with comparing data
+     * @param {WebDriver} driver
+     * @return void
      */
-    compareOfSelector(selector, data) {
-        return this.compareOfElement(data.browser.findElement(byCss(selector)), data);
+    setDriver(driver) {
+        this._attr.driver = driver;
+    }
+
+    /**
+     * @public
+     * @return {WebDriver}
+     */
+    getDriver() {
+        return this._attr.driver;
     }
 
     /**
      * Compare images
      * @public
-     * @param {Selenium Web Driver HTMLElement} element
-     * @param {Selenium Web Driver Instance} data.browser
+     * @param {string} selector - usual css selector
      * @param {string} data.image - path/to/your/image.png
      * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
-     * @return {Promise} will resolve with comparing data
+     * @return {promise} will resolve with comparing data
+     */
+    compareOfSelector(selector, data) {
+
+        let ssm = this,
+            driver = ssm.getDriver();
+
+        return ssm.compareOfElement(driver.findElement(byCss(selector)), data);
+
+    }
+
+    /**
+     * Compare images
+     * @public
+     * @param {WebDriverHTMLElement} element
+     * @param {string} data.image - path/to/your/image.png
+     * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
+     * @return {promise} will resolve with comparing data
      */
     compareOfElement(element, data) {
+
+        let ssm = this;
 
         return Promise
             .all([
@@ -106,25 +131,25 @@ class Ssm {
                 let location = dataList[0],
                     size = dataList[1];
 
-                return this.compareOfArea(location.x, location.y, size.width, size.height, data)
+                return ssm.compareOfArea(location.x, location.y, size.width, size.height, data)
 
             });
+
     }
 
     /**
      * Compare images
      * @public
      * @params {numbers} x, y, width, height - area's location
-     * @param {Selenium Web Driver Instance} data.browser
      * @param {string} data.image - path/to/your/image.png
      * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
-     * @return {Promise} will resolve with comparing data
+     * @return {promise} will resolve with comparing data
      */
     compareOfArea(x, y, width, height, data) {
 
         const ssm = this;
 
-        const {browser, image} = data;
+        const image = data.image;
 
         const mode = data.mode || MODES.TEST;
 
@@ -133,7 +158,7 @@ class Ssm {
         let actualImage, expectImage;
 
         return ssm
-            .takeScreenshotOfArea(x, y, width, height, browser)
+            .takeScreenshotOfArea(x, y, width, height)
             .then(image => {
 
                 actualImage = image;
@@ -154,37 +179,45 @@ class Ssm {
 
     }
 
-
     /**
      *
+     * @public
      * @param {string} selector - usual css selector
-     * @param {Selenium Web Driver Instance} browser
-     * @return {Promise} with resolve base64 image
+     * @return {promise} will resolve with resolve base64 image
      */
-    takeScreenshotOfSelector(selector, browser) {
-        return takeScreenshotOfElement(browser.findElement(byCss(selector)), browser);
+    takeScreenshotOfSelector(selector) {
+        let driver = this.getDriver();
+        return takeScreenshotOfElement(driver.findElement(byCss(selector)), driver);
     }
 
     /**
      *
      * @public
-     * @param {Selenium Web Driver HTMLElement} element
-     * @param {Selenium Web Driver Instance} browser
-     * @return {Promise} with resolve base64 image
+     * @param {WebDriverHTMLElement} element
+     * @return {promise} will resolve with resolve base64 image
      */
-    takeScreenshotOfElement(element, browser) {
-        return takeScreenshotOfElement(element, browser);
+    takeScreenshotOfElement(element) {
+        let driver = this.getDriver();
+        return takeScreenshotOfElement(element, driver);
     }
 
     /**
      *
      * @public
      * @params {numbers} x, y, width, height - area's location
-     * @param {Selenium Web Driver Instance} browser
-     * @return {Promise} with resolve base64 image
+     * @return {promise} will resolve with resolve base64 image
      */
-    takeScreenshotOfArea(x, y, width, height, browser) {
-        return takeScreenshotOfArea(x, y, width, height, browser);
+    takeScreenshotOfArea(x, y, width, height) {
+        let driver = this.getDriver();
+        return takeScreenshotOfArea(x, y, width, height, driver);
+    }
+
+    /**
+     *
+     * @public
+     */
+    reset() {
+        this._attr = {};
     }
 
 }
@@ -220,20 +253,21 @@ function writeBase64ToFile(pathForImage, base64String) {
 function compareImages(actualImage, expectImage) {
 
     return new Promise((resolve, reject) =>
-        resemble(actualImage).compareTo(expectImage).onComplete(data =>
-            resolve({
-                actual: actualImage,
-                expect: expectImage,
-                different: data.getImageDataUrl(),
-                info: data
-            })
+        resemble(actualImage).compareTo(expectImage).onComplete(data => {
+                data.misMatchPercentage = parseFloat(data.misMatchPercentage);
+                resolve({
+                    actual: actualImage,
+                    expect: expectImage,
+                    different: data.getImageDataUrl(),
+                    info: data
+                })
+            }
         )
     );
 
 }
 
-function takeScreenshotOfElement(element, browser) {
-
+function takeScreenshotOfElement(element, driver) {
     return Promise
         .all([
             element.getLocation(),
@@ -244,38 +278,38 @@ function takeScreenshotOfElement(element, browser) {
             let location = dataList[0],
                 size = dataList[1];
 
-            return takeScreenshotOfArea(location.x, location.y, size.width, size.height, browser)
+            return takeScreenshotOfArea(location.x, location.y, size.width, size.height, driver)
 
         });
 
 }
 
-function getScrollTop(browser) {
-    return browser
+function getScrollTop(driver) {
+    return driver
         .executeScript('return document.body.scrollTop')
         .then(scrollSize => parseInt(scrollSize, 10));
 }
 
-function getScrollLeft(browser) {
-    return browser
+function getScrollLeft(driver) {
+    return driver
         .executeScript('return document.body.scrollLeft')
         .then(scrollSize => parseInt(scrollSize, 10));
 }
 
 // return promise with REAL scroll position
-function setScrollTop(scrollSize, browser) {
-    return browser
+function setScrollTop(scrollSize, driver) {
+    return driver
         .executeScript('document.body.scrollTop = ' + scrollSize)
-        .then(() => getScrollTop(browser));
+        .then(() => getScrollTop(driver));
 }
 
-function setScrollLeft(scrollSize, browser) {
-    return browser
+function setScrollLeft(scrollSize, driver) {
+    return driver
         .executeScript('document.body.scrollLeft = ' + scrollSize)
-        .then(() => getScrollLeft(browser));
+        .then(() => getScrollLeft(driver));
 }
 
-function takeScreenshotOfArea(x, y, width, height, browser) {
+function takeScreenshotOfArea(x, y, width, height, driver) {
 
     x = x || 0;
     y = y || 0;
@@ -285,14 +319,15 @@ function takeScreenshotOfArea(x, y, width, height, browser) {
 
     return Promise
         .all([
-            setScrollTop(y, browser),
-            setScrollLeft(x, browser)
+            setScrollTop(y, driver),
+            setScrollLeft(x, driver)
         ])
         .then(dataList => {
+
             currentScrollTop = dataList[0];
             currentScrollLeft = dataList[1];
 
-            return browser.takeScreenshot();
+            return driver.takeScreenshot();
 
         })
         .then(image => {

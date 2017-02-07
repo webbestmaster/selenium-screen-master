@@ -17,21 +17,23 @@ This needed only for nodeJs canvas, see more here - https://www.npmjs.com/packag
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
 
-let SERVER_URL = 'http://statlex.github.io/';
-let WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
+const SERVER_URL = 'http://statlex.github.io/';
+const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-let webdriver = require('selenium-webdriver');
-let byCss = webdriver.By.css;
-let browser = new webdriver
+let WebDriver = require('selenium-webdriver');
+let byCss = WebDriver.By.css;
+let driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
     .build();
 
-browser.get(SERVER_URL);
+driver.get(SERVER_URL);
+
+ssm.setDriver(driver);
 
 ssm
-    .takeScreenshotOfSelector('#ancient-empire-strike-back', browser)
+    .takeScreenshotOfSelector('#ancient-empire-strike-back')
     .then(image => {
         // image base64
         console.log(image);
@@ -40,13 +42,13 @@ ssm
 // OR
 
 ssm
-    .takeScreenshotOfElement(browser.findElement(byCss('#ancient-empire-strike-back')), browser)
+    .takeScreenshotOfElement(driver.findElement(byCss('#ancient-empire-strike-back')))
     .then(image => console.log(image));
 
 // OR
 
 ssm
-    .takeScreenshotOfArea(80, 200, 500, 300, browser)
+    .takeScreenshotOfArea(80, 200, 500, 300)
     .then(image => console.log(image));
 ```
 #### Compare images
@@ -54,33 +56,34 @@ ssm
 ```javascript
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
-const MODES = ssm.MODES;
 
-ssm.setPathToReferenceFolder('./ssm-ref-folder');
+
+const SERVER_URL = 'http://statlex.github.io/';
+const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
 // WARNING
 // to COLLECT screenshots use MODE = MODES.COLLECT
 // to TEST    screenshots use MODE = MODES.TEST
+const MODES = ssm.MODES;
 const MODE = MODES[process.env.MODE] || MODES.TEST;
 
-let SERVER_URL = 'http://statlex.github.io/';
-let WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
-
-let webdriver = require('selenium-webdriver');
-let byCss = webdriver.By.css;
-let browser = new webdriver
+let WebDriver = require('selenium-webdriver');
+let byCss = WebDriver.By.css;
+let driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
     .build();
 
-browser.get(SERVER_URL);
+driver.get(SERVER_URL);
+
+ssm.setPathToReferenceFolder('./ssm-ref-folder');
+ssm.setDriver(driver);
 
 ssm
     .compareOfSelector('#ancient-empire-strike-back', {
-        browser: browser,
         image: 'game.png',
-        mode: MODES.TEST // see WARNING
+        mode: MODE // see WARNING
     })
     .then(comparing => {
 
@@ -99,10 +102,9 @@ ssm
 // OR
 
 ssm
-    .compareOfElement(browser.findElement(byCss('#ancient-empire-strike-back')), {
-        browser: browser,
+    .compareOfElement(driver.findElement(byCss('#ancient-empire-strike-back')), {
         image: 'game.png',
-        mode: MODES.TEST // see WARNING
+        mode: MODE // see WARNING
     })
     .then(comparing => console.log(comparing));
 
@@ -110,10 +112,8 @@ ssm
 
 ssm
     .compareOfArea(80, 200, 500, 300, {
-        browser: browser,
         image: 'game.png',
-        mode: MODES.TEST // see WARNING
+        mode: MODE // see WARNING
     })
     .then(comparing => console.log(comparing));
-
 ```

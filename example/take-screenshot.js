@@ -1,21 +1,23 @@
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
 
-let SERVER_URL = 'http://statlex.github.io/';
-let WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
+const SERVER_URL = 'http://statlex.github.io/';
+const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-let webdriver = require('selenium-webdriver');
-let byCss = webdriver.By.css;
-let browser = new webdriver
+let WebDriver = require('selenium-webdriver');
+let byCss = WebDriver.By.css;
+let driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
     .build();
 
-browser.get(SERVER_URL);
+driver.get(SERVER_URL);
+
+ssm.setDriver(driver);
 
 ssm
-    .takeScreenshotOfSelector('#ancient-empire-strike-back', browser)
+    .takeScreenshotOfSelector('#ancient-empire-strike-back')
     .then(image => {
         // image base64
         console.log(image);
@@ -24,11 +26,11 @@ ssm
 // OR
 
 ssm
-    .takeScreenshotOfElement(browser.findElement(byCss('#ancient-empire-strike-back')), browser)
+    .takeScreenshotOfElement(driver.findElement(byCss('#ancient-empire-strike-back')))
     .then(image => console.log(image));
 
 // OR
 
 ssm
-    .takeScreenshotOfArea(80, 200, 500, 300, browser)
+    .takeScreenshotOfArea(80, 200, 500, 300)
     .then(image => console.log(image));
