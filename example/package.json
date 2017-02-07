@@ -9,7 +9,7 @@
   "author": "webbestmaster",
   "license": "MIT",
   "dependencies": {
-    "selenium-screen-master": "^0.1.1",
+    "selenium-screen-master": "*",
     "selenium-webdriver": "^3.0.1"
   }
 }

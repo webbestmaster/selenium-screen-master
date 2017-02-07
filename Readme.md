@@ -116,3 +116,7 @@ ssm
     })
     .then(comparing => console.log(comparing));
 ```
+#### Reccomedations
+Use for test mocha + mochawesome + mochawesome/addContext + chai.<br />
+See ./test/test.js and ./test/test.sh as example to create beautiful test report.<br />
+To see my solution run tests for this projects.
