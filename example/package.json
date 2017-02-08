@@ -8,8 +8,9 @@
   },
   "author": "webbestmaster",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "selenium-screen-master": "*",
+    "selenium-server-standalone-jar": "^3.0.1",
     "selenium-webdriver": "^3.0.1"
   }
 }
