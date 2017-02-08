@@ -25,9 +25,15 @@ const byCss = WebDriver.By.css;
 const Image = Canvas.Image;
 const BASE64_IMAGE_PREFIX = 'data:image/png;base64,';
 
-const MODES = {
+const MODE = {
     TEST: 'TEST',
     COLLECT: 'COLLECT'
+};
+
+const CONSTANT = {
+    WAIT: {
+        SCREENSHOT: 5e3
+    }
 };
 
 class Ssm {
@@ -42,7 +48,14 @@ class Ssm {
          * @public
          * @type {Object}
          */
-        this.MODES = MODES;
+        this.MODE = MODE;
+
+        /**
+         * Constants
+         * @public
+         * @type {Object}
+         */
+        this.CONSTANT = CONSTANT;
 
         /**
          * Default parameters
@@ -102,10 +115,13 @@ class Ssm {
      */
     compareOfSelector(selector, data) {
 
-        let ssm = this,
-            driver = ssm.getDriver();
+        const ssm = this;
+        const driver = ssm.getDriver();
 
-        return ssm.compareOfElement(driver.findElement(byCss(selector)), data);
+        return driver.wait(
+            ssm.compareOfElement(driver.findElement(byCss(selector)), data),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        );
 
     }
 
@@ -119,21 +135,25 @@ class Ssm {
      */
     compareOfElement(element, data) {
 
-        let ssm = this;
+        const ssm = this;
+        const driver = ssm.getDriver();
 
-        return Promise
-            .all([
-                element.getLocation(),
-                element.getSize()
-            ])
-            .then(dataList => {
+        return driver.wait(
+            Promise
+                .all([
+                    element.getLocation(),
+                    element.getSize()
+                ])
+                .then(dataList => {
 
-                let location = dataList[0],
-                    size = dataList[1];
+                    let location = dataList[0],
+                        size = dataList[1];
 
-                return ssm.compareOfArea(location.x, location.y, size.width, size.height, data)
+                    return ssm.compareOfArea(location.x, location.y, size.width, size.height, data)
 
-            });
+                }),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        );
 
     }
 
@@ -149,33 +169,38 @@ class Ssm {
 
         const ssm = this;
 
+        const driver = ssm.getDriver();
+
         const image = data.image;
 
-        const mode = data.mode || MODES.TEST;
+        const mode = data.mode || MODE.TEST;
 
         const pathToImage = path.join(ssm.getPathToReferenceFolder(), image);
 
         let actualImage, expectImage;
 
-        return ssm
-            .takeScreenshotOfArea(x, y, width, height)
-            .then(image => {
+        return driver.wait(
+            ssm
+                .takeScreenshotOfArea(x, y, width, height)
+                .then(image => {
 
-                actualImage = image;
+                    actualImage = image;
 
-                switch (mode) {
-                    case MODES.TEST:
-                        return pngToBase64(pathToImage).then(image => expectImage = image);
-                        break;
-                    case MODES.COLLECT:
-                        return writeBase64ToFile(pathToImage, image);
-                        break;
-                    default:
-                        throw mode + ' - invalid compare mode!'
+                    switch (mode) {
+                        case MODE.TEST:
+                            return pngToBase64(pathToImage).then(image => expectImage = image);
+                            break;
+                        case MODE.COLLECT:
+                            return writeBase64ToFile(pathToImage, image);
+                            break;
+                        default:
+                            throw mode + ' - invalid compare mode!'
 
-                }
-            })
-            .then(() => compareImages(actualImage, expectImage || actualImage));
+                    }
+                })
+                .then(() => compareImages(actualImage, expectImage || actualImage)),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        );
 
     }
 
@@ -186,8 +211,12 @@ class Ssm {
      * @return {promise} will resolve with resolve base64 image
      */
     takeScreenshotOfSelector(selector) {
-        let driver = this.getDriver();
-        return takeScreenshotOfElement(driver.findElement(byCss(selector)), driver);
+        const ssm = this;
+        const driver = ssm.getDriver();
+        return driver.wait(
+            takeScreenshotOfElement(driver.findElement(byCss(selector)), driver),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
     }
 
     /**
@@ -197,8 +226,12 @@ class Ssm {
      * @return {promise} will resolve with resolve base64 image
      */
     takeScreenshotOfElement(element) {
-        let driver = this.getDriver();
-        return takeScreenshotOfElement(element, driver);
+        const ssm = this;
+        const driver = ssm.getDriver();
+        return driver.wait(
+            takeScreenshotOfElement(element, driver),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
     }
 
     /**
@@ -208,8 +241,87 @@ class Ssm {
      * @return {promise} will resolve with resolve base64 image
      */
     takeScreenshotOfArea(x, y, width, height) {
-        let driver = this.getDriver();
-        return takeScreenshotOfArea(x, y, width, height, driver);
+        const ssm = this;
+        const driver = ssm.getDriver();
+        return driver.wait(
+            takeScreenshotOfArea(x, y, width, height, driver),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
+    }
+
+    /**
+     *
+     * @public
+     * @param {string} selector - usual css selector
+     * @param {string} pathToImage
+     * @return {promise} will resolve with resolve base64 image
+     */
+    saveScreenshotOfSelector(selector, pathToImage) {
+
+        const ssm = this;
+        const driver = ssm.getDriver();
+        const endPathToImage = path.join(ssm.getPathToReferenceFolder(), pathToImage);
+
+        return driver.wait(
+            ssm
+                .takeScreenshotOfSelector(selector)
+                .then(image =>
+                    writeBase64ToFile(endPathToImage, image)
+                        .then(() => image)
+                ),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
+
+    }
+
+    /**
+     *
+     * @public
+     * @param {WebDriverHTMLElement} element
+     * @param {string} pathToImage
+     * @return {promise} will resolve with resolve base64 image
+     */
+    saveScreenshotOfElement(element, pathToImage) {
+
+        const ssm = this;
+        const driver = ssm.getDriver();
+        const endPathToImage = path.join(ssm.getPathToReferenceFolder(), pathToImage);
+
+        return driver.wait(
+            ssm
+                .takeScreenshotOfElement(element)
+                .then(image =>
+                    writeBase64ToFile(endPathToImage, image)
+                        .then(() => image)
+                ),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
+
+    }
+
+    /**
+     *
+     * @public
+     * @params {numbers} x, y, width, height - area's location
+     * @param {string} pathToImage
+     * @return {promise} will resolve with resolve base64 image
+     */
+    saveScreenshotOfArea(x, y, width, height, pathToImage) {
+
+        const ssm = this;
+        const driver = ssm.getDriver();
+        const endPathToImage = path.join(ssm.getPathToReferenceFolder(), pathToImage);
+
+        return driver.wait(
+            ssm
+                .takeScreenshotOfArea(x, y, width, height)
+                .then(image =>
+                    writeBase64ToFile(endPathToImage, image)
+                        .then(() => image)
+                ),
+            ssm.CONSTANT.WAIT.SCREENSHOT
+        )
+
     }
 
     /**

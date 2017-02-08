@@ -50,7 +50,56 @@ ssm
 ssm
     .takeScreenshotOfArea(80, 200, 500, 300)
     .then(image => console.log(image));
+
+
+driver.quit();
 ```
+
+#### Save screenshot of element
+```javascript
+const Ssm = require('selenium-screen-master');
+const ssm = new Ssm();
+
+const SERVER_URL = 'http://statlex.github.io/';
+const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
+
+let WebDriver = require('selenium-webdriver');
+let byCss = WebDriver.By.css;
+let driver = new WebDriver
+    .Builder()
+    .usingServer(WEB_DRIVER_SERVER_URL)
+    .withCapabilities({'browserName': 'chrome'})
+    .build();
+
+driver.get(SERVER_URL);
+
+ssm.setDriver(driver);
+
+ssm.setPathToReferenceFolder('./screenshot');
+
+ssm
+    .saveScreenshotOfSelector('#ancient-empire-strike-back', 'saved-screenshot-1.png')
+    .then(image => {
+        // image base64
+        console.log(image);
+    });
+
+// OR
+
+ssm
+    .saveScreenshotOfElement(driver.findElement(byCss('#ancient-empire-strike-back')), 'saved-screenshot-2.png')
+    .then(image => console.log(image));
+
+// OR
+
+ssm
+    .saveScreenshotOfArea(80, 200, 500, 300, 'saved-screenshot-3.png')
+    .then(image => console.log(image));
+
+
+driver.quit();
+```
+
 #### Compare images
 
 ```javascript
@@ -61,10 +110,10 @@ const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
 // WARNING
-// to COLLECT screenshots use MODE = MODES.COLLECT
-// to TEST    screenshots use MODE = MODES.TEST
-const MODES = ssm.MODES;
-const MODE = MODES[process.env.MODE] || MODES.TEST;
+// to COLLECT screenshots use MODE = MODE.COLLECT
+// to TEST    screenshots use MODE = MODE.TEST
+const SSM_MODE = ssm.MODE;
+const MODE = SSM_MODE[process.env.MODE] || SSM_MODE.TEST;
 
 let WebDriver = require('selenium-webdriver');
 let byCss = WebDriver.By.css;
@@ -94,7 +143,7 @@ ssm
 
         // comparing.info - comparing info (hasMap)
 
-        console.log(comparing);
+        console.log(comparing.info);
 
     });
 
@@ -105,7 +154,7 @@ ssm
         image: 'game.png',
         mode: MODE // see WARNING
     })
-    .then(comparing => console.log(comparing));
+    .then(comparing => console.log(comparing.info));
 
 // OR
 
@@ -114,7 +163,10 @@ ssm
         image: 'game.png',
         mode: MODE // see WARNING
     })
-    .then(comparing => console.log(comparing));
+    .then(comparing => console.log(comparing.info));
+
+
+driver.quit();
 ```
 #### Reccomedations
 Use for test mocha + mochawesome + mochawesome/addContext + chai.<br />

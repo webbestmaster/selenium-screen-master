@@ -16,8 +16,10 @@ driver.get(SERVER_URL);
 
 ssm.setDriver(driver);
 
+ssm.setPathToReferenceFolder('./screenshot');
+
 ssm
-    .takeScreenshotOfSelector('#ancient-empire-strike-back')
+    .saveScreenshotOfSelector('#ancient-empire-strike-back', 'saved-screenshot-1.png')
     .then(image => {
         // image base64
         console.log(image);
@@ -26,13 +28,13 @@ ssm
 // OR
 
 ssm
-    .takeScreenshotOfElement(driver.findElement(byCss('#ancient-empire-strike-back')))
+    .saveScreenshotOfElement(driver.findElement(byCss('#ancient-empire-strike-back')), 'saved-screenshot-2.png')
     .then(image => console.log(image));
 
 // OR
 
 ssm
-    .takeScreenshotOfArea(80, 200, 500, 300)
+    .saveScreenshotOfArea(80, 200, 500, 300, 'saved-screenshot-3.png')
     .then(image => console.log(image));
 
 

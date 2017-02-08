@@ -3,6 +3,7 @@
 "use strict";
 
 const resemble = require('node-resemble');
+const fs = require('fs');
 
 const Ssm = require('./../index');
 
@@ -23,7 +24,7 @@ describe('selenium screen master test', function () {
     let WebDriver = require('selenium-webdriver');
 
     let ssm = new Ssm();
-    const MODES = ssm.MODES;
+    const SSM_MODE = ssm.MODE;
 
     ssm.setPathToReferenceFolder('./ssm-ref-folder');
 
@@ -78,14 +79,54 @@ describe('selenium screen master test', function () {
 
     });
 
-    it('Comparing game', function () {
+    it('Save screenshot of selector', function (done) {
+
+        driver.get(SERVER_URL);
+
+        driver.wait(
+            new Promise(res => fs.unlink('./screenshot/saved-game.png', res)), 1e3
+        );
+
+        ssm.saveScreenshotOfSelector('#ancient-empire-strike-back', './../screenshot/saved-game.png').then(image => {
+
+            resemble('./screenshot/saved-game.png')
+                .compareTo('./ssm-ref-folder/game.png')
+                .onComplete(data => {
+
+                        assert(data.misMatchPercentage === '0.00', 'Should be the same images');
+
+                        addContext(this, {
+                            title: 'Actual',
+                            value: util.createTag('img', ['src', './../screenshot/saved-game.png'])
+                        });
+
+                        addContext(this, {
+                            title: 'Expect',
+                            value: util.createTag('img', ['src', './../ssm-ref-folder/game.png'])
+                        });
+
+                        addContext(this, {
+                            title: 'Different Info',
+                            value: data
+                        });
+
+                        done();
+
+                    }
+                )
+
+        })
+
+    });
+
+    it('Comparing screenshots', function () {
 
         driver.get(SERVER_URL);
 
         return ssm
             .compareOfSelector('[id="1001-tangram"]', {
                 image: './game.png',
-                mode: MODES.TEST
+                mode: SSM_MODE.TEST
             })
             .then(comparing => {
 
@@ -122,7 +163,7 @@ describe('selenium screen master test', function () {
         return ssm
             .compareOfSelector('body > div:last-child', {
                 image: './footer.png',
-                mode: MODES.TEST
+                mode: SSM_MODE.TEST
             })
             .then(comparing => {
 
