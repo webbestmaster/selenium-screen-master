@@ -43,6 +43,9 @@ class Ssm {
      */
     constructor() {
 
+        // set/add default properties
+        this.reset();
+
         /**
          * Available modes
          * @public
@@ -56,16 +59,6 @@ class Ssm {
          * @type {Object}
          */
         this.CONSTANT = CONSTANT;
-
-        /**
-         * Default parameters
-         * @private
-         * @type {Object}
-         */
-        this._attr = {
-            pathToReferenceFolder: '',
-            driver: null
-        };
 
     }
 
@@ -342,7 +335,12 @@ class Ssm {
      * @public
      */
     reset() {
-        this._attr = {};
+
+        this._attr = {
+            pathToReferenceFolder: '',
+            driver: null
+        };
+
     }
 
 }
