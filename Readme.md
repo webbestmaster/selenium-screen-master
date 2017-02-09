@@ -168,6 +168,20 @@ ssm
 
 driver.quit();
 ```
+
+#### Test
+
+[!] - Test using a chromedriver for macOS<br />
+
+1 - Install all dependencies for selenium-screen-master<br />
+2 - Install mocha globally
+
+>$ sudo npm i -g mocha
+
+Run test
+
+>$ npm test
+
 #### Reccomedations
 Use for test mocha + mochawesome + mochawesome/addContext + chai.<br />
 See ./test/test.js and ./test/test.sh as example to create beautiful test report.<br />

@@ -12,8 +12,15 @@ const util = require('./test-util');
 
 const addContext = require('mochawesome/addContext');
 
+const SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
+
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
+
+const server = new SeleniumServer('./driver/mac/selenium-server-standalone-3.0.1.jar', {
+    port: 4444,
+    jvmArgs: ['-Dwebdriver.chrome.driver=./driver/mac/chromedriver']
+});
 
 describe('selenium screen master test', function () {
 
@@ -27,6 +34,10 @@ describe('selenium screen master test', function () {
     const SSM_MODE = ssm.MODE;
 
     ssm.setPathToReferenceFolder('./ssm-ref-folder');
+
+    before(() => server.start());
+
+    after(() => server.stop());
 
     beforeEach(() => {
         driver = new WebDriver
@@ -84,7 +95,7 @@ describe('selenium screen master test', function () {
         driver.get(SERVER_URL);
 
         driver.wait(
-            new Promise(res => fs.unlink('./screenshot/saved-game.png', res)), 1e3
+            new Promise((res, rej) => fs.unlink('./screenshot/saved-game.png', err => err ? rej() : res())), 1e3
         );
 
         ssm.saveScreenshotOfSelector('#ancient-empire-strike-back', './../screenshot/saved-game.png').then(image => {
