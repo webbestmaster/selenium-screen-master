@@ -32,6 +32,8 @@ describe('selenium screen master test', function () {
 
     let ssm = new Ssm();
     const SSM_MODE = ssm.MODE;
+    const MODE = SSM_MODE.TEST;
+    // const MODE = SSM_MODE.COLLECT;
 
     ssm.setPathToReferenceFolder('./ssm-ref-folder');
 
@@ -49,6 +51,8 @@ describe('selenium screen master test', function () {
         ssm = new Ssm();
         ssm.setPathToReferenceFolder('./ssm-ref-folder');
         ssm.setDriver(driver);
+
+        return driver.manage().window().setSize(1024, 768);
 
     });
 
@@ -137,7 +141,7 @@ describe('selenium screen master test', function () {
         return ssm
             .compareOfSelector('[id="1001-tangram"]', {
                 image: './game.png',
-                mode: SSM_MODE.TEST
+                mode: MODE
             })
             .then(comparing => {
 
@@ -174,7 +178,7 @@ describe('selenium screen master test', function () {
         return ssm
             .compareOfSelector('body > div:last-child', {
                 image: './footer.png',
-                mode: SSM_MODE.TEST
+                mode: MODE
             })
             .then(comparing => {
 
