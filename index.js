@@ -327,6 +327,19 @@ class Ssm {
     /**
      *
      * @public
+     * @param {number} width - new browser width
+     * @param {number} height - new browser width
+     * @return {promise}
+     */
+    setSize(width, height) {
+        const ssm = this;
+        const driver = ssm.getDriver();
+        return driver.manage().window().setSize(width, height);
+    }
+
+    /**
+     *
+     * @public
      */
     reset() {
         this._attr = {};

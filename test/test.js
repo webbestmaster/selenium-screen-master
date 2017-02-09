@@ -52,7 +52,7 @@ describe('selenium screen master test', function () {
         ssm.setPathToReferenceFolder('./ssm-ref-folder');
         ssm.setDriver(driver);
 
-        return driver.manage().window().setSize(1024, 768);
+        return ssm.setSize(1024, 768);
 
     });
 

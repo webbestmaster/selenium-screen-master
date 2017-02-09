@@ -13,6 +13,7 @@ This needed only for nodeJs canvas, see more here - https://www.npmjs.com/packag
 ### How to use
 
 #### Take screenshot of element
+
 ```javascript
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
@@ -56,6 +57,7 @@ driver.quit();
 ```
 
 #### Save screenshot of element
+
 ```javascript
 const Ssm = require('selenium-screen-master');
 const ssm = new Ssm();
@@ -169,6 +171,13 @@ ssm
 driver.quit();
 ```
 
+#### Helpers
+
+```javascript
+// set screen size
+ssm.setSize(1024, 768);
+```
+
 #### Test
 
 [!] - Test using a chromedriver for macOS<br />
@@ -183,6 +192,7 @@ Run test
 >$ npm test
 
 #### Reccomedations
+
 Use for test mocha + mochawesome + mochawesome/addContext + chai.<br />
 See ./test/test.js and ./test/test.sh as example to create beautiful test report.<br />
 To see my solution run tests for this projects.
