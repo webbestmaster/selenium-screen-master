@@ -176,6 +176,9 @@ driver.quit();
 ```javascript
 // set screen size
 ssm.setSize(1024, 768);
+
+// reset properties
+ssm.reset();
 ```
 
 #### Test
