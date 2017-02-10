@@ -71,8 +71,6 @@ describe('selenium screen master test', function () {
                 .compareTo('./ssm-ref-folder/game.png')
                 .onComplete(data => {
 
-                        assert(data.misMatchPercentage === '0.00', 'Should be the same images');
-
                         addContext(this, {
                             title: 'Actual',
                             value: util.createTag('img', ['src', image])
@@ -87,6 +85,8 @@ describe('selenium screen master test', function () {
                             title: 'Different Info',
                             value: data
                         });
+
+                        assert(data.misMatchPercentage === '0.00', 'Should be the same images');
 
                         done();
 
@@ -113,8 +113,6 @@ describe('selenium screen master test', function () {
                 .compareTo('./ssm-ref-folder/game.png')
                 .onComplete(data => {
 
-                        assert(data.misMatchPercentage === '0.00', 'Should be the same images');
-
                         addContext(this, {
                             title: 'Actual',
                             value: util.createTag('img', ['src', './../' + pathToScreenshot])
@@ -129,6 +127,8 @@ describe('selenium screen master test', function () {
                             title: 'Different Info',
                             value: data
                         });
+
+                        assert(data.misMatchPercentage === '0.00', 'Should be the same images');
 
                         done();
 
@@ -150,8 +150,6 @@ describe('selenium screen master test', function () {
             })
             .then(comparing => {
 
-                assert(comparing.info.misMatchPercentage !== 0, 'Should be the different images');
-
                 addContext(this, {
                     title: 'Actual',
                     value: util.createTag('img', ['src', comparing.actual])
@@ -171,6 +169,8 @@ describe('selenium screen master test', function () {
                     title: 'Different Info',
                     value: comparing.info
                 });
+
+                assert(comparing.info.misMatchPercentage !== 0, 'Should be the different images');
 
             });
 
@@ -187,8 +187,6 @@ describe('selenium screen master test', function () {
             })
             .then(comparing => {
 
-                assert(comparing.info.misMatchPercentage === 0, 'Should be the same images');
-
                 addContext(this, {
                     title: 'Actual',
                     value: util.createTag('img', ['src', comparing.actual])
@@ -208,6 +206,8 @@ describe('selenium screen master test', function () {
                     title: 'Different Info',
                     value: comparing.info
                 });
+
+                assert(comparing.info.misMatchPercentage === 0, 'Should be the same images');
 
             });
 
