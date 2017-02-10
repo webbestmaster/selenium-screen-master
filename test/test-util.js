@@ -18,6 +18,22 @@ const util = {
             attributeList
         });
 
+    },
+
+    detectOsName: function () {
+
+        const platformName = process.platform;
+
+        if (/darwin/.test(platformName)) {
+            return 'darwin';
+        }
+
+        if (/linux/.test(platformName)) {
+            return 'linux';
+        }
+
+        throw 'Can NOT detect OS!';
+
     }
 
 };

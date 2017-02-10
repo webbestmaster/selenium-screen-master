@@ -14,12 +14,15 @@ const addContext = require('mochawesome/addContext');
 
 const SeleniumServer = require('selenium-webdriver/remote').SeleniumServer;
 
-const SERVER_URL = 'http://statlex.github.io/';
-const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
+const PORT = 4444;
+const OS_NAME = util.detectOsName();
 
-const server = new SeleniumServer('./driver/mac/selenium-server-standalone-3.0.1.jar', {
-    port: 4444,
-    jvmArgs: ['-Dwebdriver.chrome.driver=./driver/mac/chromedriver']
+const SITE_URL = 'http://statlex.github.io/';
+const WEB_DRIVER_SERVER_URL = 'http://localhost:' + PORT + '/wd/hub';
+
+const server = new SeleniumServer('./driver/selenium-server-standalone-3.0.1.jar', {
+    port: PORT,
+    jvmArgs: ['-Dwebdriver.chrome.driver=./driver/' + OS_NAME + '/chromedriver']
 });
 
 describe('selenium screen master test', function () {
@@ -60,7 +63,7 @@ describe('selenium screen master test', function () {
 
     it('Take screenshot of selector', function (done) {
 
-        driver.get(SERVER_URL);
+        driver.get(SITE_URL);
 
         ssm.takeScreenshotOfSelector('#ancient-empire-strike-back').then(image => {
 
@@ -96,13 +99,15 @@ describe('selenium screen master test', function () {
 
     it('Save screenshot of selector', function (done) {
 
-        driver.get(SERVER_URL);
+        driver.get(SITE_URL);
+
+        let pathToScreenshot = './screenshot/saved-game.png';
 
         driver.wait(
-            new Promise((res, rej) => fs.unlink('./screenshot/saved-game.png', err => err ? rej() : res())), 1e3
+            new Promise((res, rej) => fs.unlink(pathToScreenshot, err => err ? rej() : res())), 1e3
         );
 
-        ssm.saveScreenshotOfSelector('#ancient-empire-strike-back', './../screenshot/saved-game.png').then(image => {
+        ssm.saveScreenshotOfSelector('#ancient-empire-strike-back', './../' + pathToScreenshot).then(image => {
 
             resemble('./screenshot/saved-game.png')
                 .compareTo('./ssm-ref-folder/game.png')
@@ -112,7 +117,7 @@ describe('selenium screen master test', function () {
 
                         addContext(this, {
                             title: 'Actual',
-                            value: util.createTag('img', ['src', './../screenshot/saved-game.png'])
+                            value: util.createTag('img', ['src', './../' + pathToScreenshot])
                         });
 
                         addContext(this, {
@@ -136,7 +141,7 @@ describe('selenium screen master test', function () {
 
     it('Comparing screenshots', function () {
 
-        driver.get(SERVER_URL);
+        driver.get(SITE_URL);
 
         return ssm
             .compareOfSelector('[id="1001-tangram"]', {
@@ -173,7 +178,7 @@ describe('selenium screen master test', function () {
 
     it('Comparing footer of selector', function () {
 
-        driver.get(SERVER_URL);
+        driver.get(SITE_URL);
 
         return ssm
             .compareOfSelector('body > div:last-child', {
