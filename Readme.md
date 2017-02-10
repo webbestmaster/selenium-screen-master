@@ -183,12 +183,10 @@ ssm.reset();
 
 #### Test
 
-[!] - Test using a chromedriver for macOS<br />
-
 1 - Install all dependencies for selenium-screen-master<br />
 2 - Install mocha globally
 
->$ sudo npm i -g mocha
+>$ npm i && sudo npm i -g mocha
 
 Run test
 
