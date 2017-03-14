@@ -47,6 +47,13 @@ class Ssm {
         this.reset();
 
         /**
+         * Default mode
+         * @private
+         * @type {String}
+         */
+        this._mode = MODE.TEST;
+
+        /**
          * Available modes
          * @public
          * @type {Object}
@@ -60,6 +67,26 @@ class Ssm {
          */
         this.CONSTANT = CONSTANT;
 
+    }
+
+    // TODO: this functional to documentation
+    /**
+     * Set mode of ssm: MODE.TEST or MODE.COLLECT
+     * @public
+     * @param {string} mode
+     * @return void
+     */
+    setMode(mode) {
+        this._mode = mode;
+    }
+
+    /**
+     * Get mode of ssm: MODE.TEST or MODE.COLLECT
+     * @public
+     * @return {string} mode
+     */
+    getMode() {
+        return this._mode;
     }
 
     /**
@@ -150,12 +177,13 @@ class Ssm {
 
     }
 
+    // TODO: this functional to documentation
     /**
      * Compare images
      * @public
      * @params {numbers} x, y, width, height - area's location
-     * @param {string} data.image - path/to/your/image.png
-     * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
+     * @param {string} data.image - path/to/your/image.png || data {string} path to image
+     * @param {string} [data.mode] - mode of comparing - 'COLLECT' or 'TEST'
      * @return {promise} will resolve with comparing data
      */
     compareOfArea(x, y, width, height, data) {
@@ -164,9 +192,16 @@ class Ssm {
 
         const driver = ssm.getDriver();
 
+        if (typeof data === 'string') {
+            data = {
+                image: data,
+                mode: ssm.getMode()
+            }
+        }
+
         const image = data.image;
 
-        const mode = data.mode || MODE.TEST;
+        const mode = data.mode || ssm.getMode();
 
         const pathToImage = path.join(ssm.getPathToReferenceFolder(), image);
 
