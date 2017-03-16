@@ -16,14 +16,13 @@ This needed only for nodeJs canvas, see more here - https://www.npmjs.com/packag
 
 ```javascript
 const Ssm = require('selenium-screen-master');
-const ssm = new Ssm();
 
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-let WebDriver = require('selenium-webdriver');
-let byCss = WebDriver.By.css;
-let driver = new WebDriver
+const WebDriver = require('selenium-webdriver');
+const byCss = WebDriver.By.css;
+const driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
@@ -31,7 +30,11 @@ let driver = new WebDriver
 
 driver.get(SERVER_URL);
 
+const ssm = new Ssm();
+
+ssm.setPathToReferenceFolder('./ssm-ref-folder');
 ssm.setDriver(driver);
+ssm.setSize(1024, 768);
 
 ssm
     .takeScreenshotOfSelector('#ancient-empire-strike-back')
@@ -60,14 +63,13 @@ driver.quit();
 
 ```javascript
 const Ssm = require('selenium-screen-master');
-const ssm = new Ssm();
 
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-let WebDriver = require('selenium-webdriver');
-let byCss = WebDriver.By.css;
-let driver = new WebDriver
+const WebDriver = require('selenium-webdriver');
+const byCss = WebDriver.By.css;
+const driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
@@ -75,7 +77,11 @@ let driver = new WebDriver
 
 driver.get(SERVER_URL);
 
+const ssm = new Ssm();
+
+ssm.setPathToReferenceFolder('./ssm-ref-folder');
 ssm.setDriver(driver);
+ssm.setSize(1024, 768);
 
 ssm.setPathToReferenceFolder('./screenshot');
 
@@ -106,20 +112,13 @@ driver.quit();
 
 ```javascript
 const Ssm = require('selenium-screen-master');
-const ssm = new Ssm();
 
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-// WARNING
-// to COLLECT screenshots use MODE = MODE.COLLECT
-// to TEST    screenshots use MODE = MODE.TEST
-const SSM_MODE = ssm.MODE;
-const MODE = SSM_MODE[process.env.MODE] || SSM_MODE.TEST;
-
-let WebDriver = require('selenium-webdriver');
-let byCss = WebDriver.By.css;
-let driver = new WebDriver
+const WebDriver = require('selenium-webdriver');
+const byCss = WebDriver.By.css;
+const driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
@@ -127,14 +126,20 @@ let driver = new WebDriver
 
 driver.get(SERVER_URL);
 
+const ssm = new Ssm();
+
 ssm.setPathToReferenceFolder('./ssm-ref-folder');
 ssm.setDriver(driver);
+// WARNING
+// to COLLECT screenshots use MODE = MODE.COLLECT
+// to TEST    screenshots use MODE = MODE.TEST
+const MODE = ssm.MODE;
+ssm.setMode(MODE[process.env.MODE] || MODE.TEST);
+
+ssm.setSize(1024, 768);
 
 ssm
-    .compareOfSelector('#ancient-empire-strike-back', {
-        image: 'game.png',
-        mode: MODE // see WARNING
-    })
+    .compareOfSelector('#ancient-empire-strike-back', 'game.png')
     .then(comparing => {
 
         // comparing.actual - actual image (base64)
@@ -152,21 +157,14 @@ ssm
 // OR
 
 ssm
-    .compareOfElement(driver.findElement(byCss('#ancient-empire-strike-back')), {
-        image: 'game.png',
-        mode: MODE // see WARNING
-    })
+    .compareOfElement(driver.findElement(byCss('#ancient-empire-strike-back')), 'game.png')
     .then(comparing => console.log(comparing.info));
 
 // OR
 
 ssm
-    .compareOfArea(80, 200, 500, 300, {
-        image: 'game.png',
-        mode: MODE // see WARNING
-    })
+    .compareOfArea(80, 200, 500, 300, 'game.png')
     .then(comparing => console.log(comparing.info));
-
 
 driver.quit();
 ```
