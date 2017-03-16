@@ -1,12 +1,11 @@
 const Ssm = require('selenium-screen-master');
-const ssm = new Ssm();
 
 const SERVER_URL = 'http://statlex.github.io/';
 const WEB_DRIVER_SERVER_URL = 'http://localhost:4444/wd/hub';
 
-let WebDriver = require('selenium-webdriver');
-let byCss = WebDriver.By.css;
-let driver = new WebDriver
+const WebDriver = require('selenium-webdriver');
+const byCss = WebDriver.By.css;
+const driver = new WebDriver
     .Builder()
     .usingServer(WEB_DRIVER_SERVER_URL)
     .withCapabilities({'browserName': 'chrome'})
@@ -14,7 +13,11 @@ let driver = new WebDriver
 
 driver.get(SERVER_URL);
 
+const ssm = new Ssm();
+
+ssm.setPathToReferenceFolder('./ssm-ref-folder');
 ssm.setDriver(driver);
+ssm.setSize(1024, 768);
 
 ssm.setPathToReferenceFolder('./screenshot');
 
