@@ -69,7 +69,6 @@ class Ssm {
 
     }
 
-    // TODO: this functional to documentation
     /**
      * Set mode of ssm: MODE.TEST or MODE.COLLECT
      * @public
@@ -129,17 +128,16 @@ class Ssm {
      * Compare images
      * @public
      * @param {string} selector - usual css selector
-     * @param {string} data.image - path/to/your/image.png
-     * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
+     * @param {string} pathToImage - path/to/your/image.png
      * @return {promise} will resolve with comparing data
      */
-    compareOfSelector(selector, data) {
+    compareOfSelector(selector, pathToImage) {
 
         const ssm = this;
         const driver = ssm.getDriver();
 
         return driver.wait(
-            ssm.compareOfElement(driver.findElement(byCss(selector)), data),
+            ssm.compareOfElement(driver.findElement(byCss(selector)), pathToImage),
             ssm.CONSTANT.WAIT.SCREENSHOT
         );
 
@@ -149,11 +147,10 @@ class Ssm {
      * Compare images
      * @public
      * @param {WebDriverHTMLElement} element
-     * @param {string} data.image - path/to/your/image.png
-     * @param {string} data.mode - mode of comparing - 'COLLECT' or 'TEST'
+     * @param {string} pathToImage - path/to/your/image.png
      * @return {promise} will resolve with comparing data
      */
-    compareOfElement(element, data) {
+    compareOfElement(element, pathToImage) {
 
         const ssm = this;
         const driver = ssm.getDriver();
@@ -169,7 +166,7 @@ class Ssm {
                     let location = dataList[0],
                         size = dataList[1];
 
-                    return ssm.compareOfArea(location.x, location.y, size.width, size.height, data)
+                    return ssm.compareOfArea(location.x, location.y, size.width, size.height, pathToImage)
 
                 }),
             ssm.CONSTANT.WAIT.SCREENSHOT
@@ -177,33 +174,22 @@ class Ssm {
 
     }
 
-    // TODO: this functional to documentation
     /**
      * Compare images
      * @public
      * @params {numbers} x, y, width, height - area's location
-     * @param {string} data.image - path/to/your/image.png || data {string} path to image
-     * @param {string} [data.mode] - mode of comparing - 'COLLECT' or 'TEST'
+     * @param {string} pathToImage - path/to/your/image.png
      * @return {promise} will resolve with comparing data
      */
-    compareOfArea(x, y, width, height, data) {
+    compareOfArea(x, y, width, height, pathToImage) {
 
         const ssm = this;
 
         const driver = ssm.getDriver();
 
-        if (typeof data === 'string') {
-            data = {
-                image: data,
-                mode: ssm.getMode()
-            }
-        }
+        const mode = ssm.getMode();
 
-        const image = data.image;
-
-        const mode = data.mode || ssm.getMode();
-
-        const pathToImage = path.join(ssm.getPathToReferenceFolder(), image);
+        pathToImage = path.join(ssm.getPathToReferenceFolder(), pathToImage);
 
         let actualImage, expectImage;
 

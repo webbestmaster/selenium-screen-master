@@ -30,15 +30,8 @@ describe('selenium screen master test', function () {
     // each test should be less than 10s
     this.timeout(10e3);
 
-    let driver;
-    let WebDriver = require('selenium-webdriver');
-
-    let ssm = new Ssm();
-    const SSM_MODE = ssm.MODE;
-    const MODE = SSM_MODE.TEST;
-    // const MODE = SSM_MODE.COLLECT;
-
-    ssm.setPathToReferenceFolder('./ssm-ref-folder');
+    let driver, ssm;
+    const WebDriver = require('selenium-webdriver');
 
     before(() => server.start());
 
@@ -52,6 +45,7 @@ describe('selenium screen master test', function () {
             .build();
 
         ssm = new Ssm();
+        ssm.setMode(ssm.MODE.TEST); // MODE.TEST used as default
         ssm.setPathToReferenceFolder('./ssm-ref-folder');
         ssm.setDriver(driver);
 
@@ -139,36 +133,15 @@ describe('selenium screen master test', function () {
 
     });
 
-    it('Comparing screenshots', function () {
+    it('Comparing screenshots of selector: should be the different', function () {
 
         driver.get(SITE_URL);
 
         return ssm
-            .compareOfSelector('[id="1001-tangram"]', {
-                image: './game.png',
-                mode: MODE
-            })
+            .compareOfSelector('[id="1001-tangram"]', './game.png')
             .then(comparing => {
 
-                addContext(this, {
-                    title: 'Actual',
-                    value: util.createTag('img', ['src', comparing.actual])
-                });
-
-                addContext(this, {
-                    title: 'Expect',
-                    value: util.createTag('img', ['src', comparing.expect])
-                });
-
-                addContext(this, {
-                    title: 'Different',
-                    value: util.createTag('img', ['src', comparing.different])
-                });
-
-                addContext(this, {
-                    title: 'Different Info',
-                    value: comparing.info
-                });
+                util.addComparing(comparing, this);
 
                 assert(comparing.info.misMatchPercentage !== 0, 'Should be the different images');
 
@@ -176,36 +149,15 @@ describe('selenium screen master test', function () {
 
     });
 
-    it('Comparing footer of selector', function () {
+    it('Comparing screenshots of selector: should be the same', function () {
 
         driver.get(SITE_URL);
 
         return ssm
-            .compareOfSelector('body > div:last-child', {
-                image: './footer.png',
-                mode: MODE
-            })
+            .compareOfSelector('body > div:last-child', './footer.png')
             .then(comparing => {
 
-                addContext(this, {
-                    title: 'Actual',
-                    value: util.createTag('img', ['src', comparing.actual])
-                });
-
-                addContext(this, {
-                    title: 'Expect',
-                    value: util.createTag('img', ['src', comparing.expect])
-                });
-
-                addContext(this, {
-                    title: 'Different',
-                    value: util.createTag('img', ['src', comparing.different])
-                });
-
-                addContext(this, {
-                    title: 'Different Info',
-                    value: comparing.info
-                });
+                util.addComparing(comparing, this);
 
                 assert(comparing.info.misMatchPercentage === 0, 'Should be the same images');
 
